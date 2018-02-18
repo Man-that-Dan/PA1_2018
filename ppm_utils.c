@@ -1,6 +1,6 @@
 #include "ppm_utils.h"
 #include <stdio.h>
-
+// delete this comment. note to self: may want to change any header ->'s to .'s
 
 void ckws_comments(FILE *infileptr){
   int done = 0;
@@ -53,40 +53,122 @@ void openInputFiles(char* name, FILE* inPut[]){
 }
 
 image_t* removeNoiseAverage(image_t* img[]){
-  image_t newImg;
+  image_t* newImg = (image_t*) malloc(sizeof(image_t));
+  newImg->header = img[0].header;
   int sum = 0;
   int i;
   int r = 0;
-  int totalPixels = (img[0]->header->HEIGHT)*(img[0]->header->WIDTH);
-//delete this comment. replace with a while loop increasing the pixel that is averaged
+  int totalPixels = (img[0].header.HEIGHT)*(img[0].header.WIDTH);
+  // delete this comment: remember to free this later
+  newImg->pixels = (pixel_t*) malloc(sizeof(pixel_t) * totalPixels);
   while(r < totalPixels){
   // Average Red values
     for(i = 0; i < 10; i++){
-      int val = img[i]->pixels[r]->R;
+      int val = img[i].pixels[r].R;
       sum += val;
     };
     int avg = sum/10;
-    newImg->pixels[r]->R = avg;
+    newImg->pixels[r].R = avg;
 
   // Average Green values
     for(i = 0; i < 10; i++){
-      int val = img[i]->pixels[r]->G;
+      int val = img[i].pixels[r].G;
       sum += val;
     };
     int avg = sum/10;
-    newImg->pixels[r]->G = avg;
+    newImg->pixels[r].G = avg;
 
   // Average Blue values
     for(i = 0; i < 10; i++){
-      int val = img[i]->pixels[r]->B;
+      int val = img[i].pixels[r].B;
       sum += val;
     };
     int avg = sum/10;
-    newImg->pixels[r]->B = avg;
+    newImg->pixels[r].B = avg;
 
     //move on to next pixel
     r++;
   };
+  return newImg;
+};
+
+//change this for medians then delete this ckws_comments
+//
+//
+image_t* removeNoiseMedian(image_t* image[]){
+  image_t* newImg = (image_t*) malloc(sizeof(image_t));
+  newImg->header = img[0].header;
+  int nums[9];
+  int i;
+  int r = 0;
+  int totalPixels = (img[0].header.HEIGHT)*(img[0].header.WIDTH);
+  newImg->pixels = (pixel_t*) malloc(sizeof(pixel_t) * totalPixels);
+//delete this comment. replace with a while loop increasing the pixel that is averaged
+  while(r < totalPixels){
+  // Average Red values
+    for(i = 0; i < 9; i++){
+      int val = img[i].pixels[r].R;
+      nums[i] = val;
+    };
+    sort(nums, 9);
+    int median = nums[4];
+    newImg->pixels[r].R = median;
+
+  // Average Green values
+    for(i = 0; i < 9; i++){
+      int val = img[i].pixels[r].G;
+      nums[i] = val;
+    };
+    sort(nums, 9);
+    int median = nums[4];
+    newImg->pixels[r].G = median;
+
+  // Average Blue values
+    for(i = 0; i < 9; i++){
+      int val = img[i].pixels[r].B;
+      nums[i] = val;
+    };
+    sort(nums, 9);
+    int median = nums[4];
+    newImg->pixels[r].B = median;
+
+    //move on to next pixel
+    r++;
+  };
+
+  return newImg;
+};
+
+void swap(int* left, int* right){
+  int temp = *(left);
+  *(left) = *(right);
+  *(right) = temp;
+}
+
+// delete this comment. Note to self: check sort functionality.
+void sort(unsigned int* arr, int n){
+  int* indexer = arr;
+  int i;
+  int gap = 4;
+  double shrink = 1.3;
+  int swaps = 1;
+  int totalSwaps = 0;
+  while(swaps > 0 && gap != 0){
+    swaps = 0;
+    indexer = arr;
+    for(i = 0; i < n; i++, indexer++){
+      if((*indexer) > (*(indexer+gap))){
+        swaps++;
+        swap(indexer, (indexer+gap));
+
+      };
+    gap = gap / shrink;
+    gap = gap < 1 ? 1 : gap;
+    };
+    totalSwaps += swaps;
+  };
+  // delete this printf("Performed %d swaps", totalSwaps);
+};
 };
 
 header_t read_header(FILE* image_file) {
