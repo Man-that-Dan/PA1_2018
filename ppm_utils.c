@@ -35,7 +35,7 @@ void openInputFiles(char* name, FILE* inPut[]){
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
-        exit();
+        exit(0);
       };
     }
   };
@@ -48,7 +48,7 @@ void openInputFiles(char* name, FILE* inPut[]){
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
-        exit();
+        exit(0);
       };
     }
   };
@@ -143,14 +143,14 @@ image_t* removeNoiseMedian(image_t* image[]){
 };
 
 void swap(unsigned int* a, unsigned int* b){
-  int temp = *(a);
+  unsigned int temp = *(a);
   *(a) = *(b);
   *(b) = temp;
 }
 
 // delete this comment. Note to self: check sort functionality.
 void sort(unsigned int* arr, int n){
-  int* indexer = arr;
+  unsigned int* indexer = arr;
   int i;
   int gap = 4;
   double shrink = 1.3;
