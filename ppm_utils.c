@@ -31,7 +31,7 @@ void openInputFiles(char* name, FILE* inPut[]){
     char fileName[20];
     for(i = 0; i < 10; i++){
       int ext = i+1;
-      sprintf(fileName, "average_%3d.ppm", ext);
+      sprintf(fileName, "average_%03d.ppm", ext);
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
@@ -44,7 +44,7 @@ void openInputFiles(char* name, FILE* inPut[]){
     char fileName[20];
     for(i = 0; i < 9; i++){
       int ext = i+1;
-      sprintf(fileName, "median_%3d.ppm", ext);
+      sprintf(fileName, "median_%03d.ppm", ext);
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
