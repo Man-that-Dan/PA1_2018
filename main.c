@@ -63,6 +63,8 @@ int main(int argc, char * argv[]){
 
       for(o = 0; o < 10; o++){
         fclose(avgFiles[o]);
+        free(avgImgs[i]->pixels);
+        free(avgImgs[i]);
       };
   };
 
@@ -79,10 +81,13 @@ int main(int argc, char * argv[]){
 
       for(o = 0; o < 9; o++){
         fclose(medFiles[o]);
+        free(medImgs[i]->pixels);
+        free(medImgs[i]);
       };
   };
 
   //free allocated memory and close output file
+
   free(medImgs);
   free(avgImgs);
   free(outputImg->pixels);
