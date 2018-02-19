@@ -1,4 +1,4 @@
-//test comment
+
 #ifndef PPM_UTILS
 #define PPM_UTILS
 

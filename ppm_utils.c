@@ -1,9 +1,18 @@
+/*************************
+*Daniel Toro
+*CPSC 1020 002, Sp18
+*dtoro@g.clemson.edu
+*************************/
+
+
+
+
 #include "ppm_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-// delete this comment. note to self: may want to change any header ->'s to .'s
 
+// function to skip white spaces and comments
 void ckws_comments(FILE *infileptr){
   int done = 0;
   while(done == 0){
@@ -25,7 +34,9 @@ void ckws_comments(FILE *infileptr){
   };
 }
 
+//opens input files and stores pointers in FILE pointer array given
 void openInputFiles(char* name, FILE* inPut[]){
+  // open files named average###.ppm
   if(strcmp(name, "average") == 0){
     int i;
     char fileName[20];
@@ -39,6 +50,7 @@ void openInputFiles(char* name, FILE* inPut[]){
       };
     }
   };
+  // open files named median###.ppm
   if(strcmp(name, "median") == 0){
     int i;
     char fileName[20];
@@ -55,6 +67,7 @@ void openInputFiles(char* name, FILE* inPut[]){
 
 }
 
+//removes noise using average value of pixels
 image_t* removeNoiseAverage(image_t* img[]){
   image_t* newImg = (image_t*) malloc(sizeof(image_t));
   newImg->header = img[0]->header;
@@ -62,7 +75,7 @@ image_t* removeNoiseAverage(image_t* img[]){
   int i;
   int r = 0;
   int totalPixels = (img[0]->header.HEIGHT)*(img[0]->header.WIDTH);
-  // delete this comment: remember to free this later
+
   newImg->pixels = (pixel_t*) malloc(sizeof(pixel_t) * totalPixels);
   while(r < totalPixels){
   // Average Red values
@@ -95,9 +108,7 @@ image_t* removeNoiseAverage(image_t* img[]){
   return newImg;
 };
 
-//change this for medians then delete this ckws_comments
-//
-//
+//opens values using median pixel values
 image_t* removeNoiseMedian(image_t* image[]){
   image_t* newImg = (image_t*) malloc(sizeof(image_t));
   newImg->header = image[0]->header;
@@ -106,7 +117,7 @@ image_t* removeNoiseMedian(image_t* image[]){
   int r = 0;
   int totalPixels = (image[0]->header.HEIGHT)*(image[0]->header.WIDTH);
   newImg->pixels = (pixel_t*) malloc(sizeof(pixel_t) * totalPixels);
-//delete this comment. replace with a while loop increasing the pixel that is averaged
+
   while(r < totalPixels){
   // Average Red values
     for(i = 0; i < 9; i++){
@@ -142,13 +153,14 @@ image_t* removeNoiseMedian(image_t* image[]){
   return newImg;
 };
 
+//swap values in two memory locations
 void swap(unsigned int* a, unsigned int* b){
   unsigned int temp = *(a);
   *(a) = *(b);
   *(b) = temp;
 }
 
-// delete this comment. Note to self: check sort functionality.
+//sort using comb sort
 void sort(unsigned int* arr, int n){
   unsigned int* indexer = arr;
   int i;
@@ -170,10 +182,10 @@ void sort(unsigned int* arr, int n){
     };
     totalSwaps += swaps;
   };
-  // delete this printf("Performed %d swaps", totalSwaps);
+
 };
 
-
+//read a header using ckws_comments to skip comments and spaces
 header_t read_header(FILE* image_file) {
   header_t header;
     fscanf(image_file, "%s", header.MAGIC_NUMBER);
@@ -187,11 +199,13 @@ header_t read_header(FILE* image_file) {
   return header;
 }
 
+//write header to a file
 void write_header(FILE* out_file, header_t header) {
   fprintf(out_file, "%s %u %u %u ",
     header.MAGIC_NUMBER, header.WIDTH, header.HEIGHT, header.MAX_COLOR);
 }
 
+//read a ppm file and store in an image structure
 image_t* read_ppm(FILE* image_file) {
   header_t header = read_header(image_file);
   image_t* image = NULL;
@@ -259,17 +273,4 @@ void write_p3(FILE* out_file, image_t* image) {
       image->pixels[i].B
     );
   }
-}
-
-image_t* copy_image(image_t* image) {
-  // Size of a header_t and a pointer to pixel data somewhere else in memory
-  image_t* copy = (image_t*) malloc(sizeof(image_t));
-  // Copy assignment of header info
-  copy->header = image->header;
-  int num_pixels = copy->header.WIDTH * copy->header.HEIGHT;
-  // Allocate memory for pixel data
-  copy->pixels = (pixel_t*) malloc(sizeof(pixel_t)*num_pixels);
-  // One line deep copy
-  memcpy(copy->pixels, image->pixels, sizeof(pixel_t)*num_pixels);
-  return copy;
 }
