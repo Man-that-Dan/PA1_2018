@@ -15,12 +15,12 @@ int main(int argc, char * argv[]){
   };
   char name[20];
   strcpy(name, argv[1]);
-  char* namePtr = &name;
+  char* namePtr = name;
   char outFile[50];
   strcpy(outFile, argv[2]);
 
   FILE * optr;
-  optr = fopen(outfile, "w");
+  optr = fopen(outFile, "w");
   if(optr == NULL){
     printf("Could not open output file");
     return 1;
@@ -29,21 +29,22 @@ int main(int argc, char * argv[]){
   FILE* medFiles[9];
   FILE* avgFiles[10];
 
-  image_t** medImgs = (image_t*)malloc(sizeof(image_t)*9);
-  image_t** avgImgs = (image_t*)malloc(sizeof(image_t)*10);
+  image_t** medImgs = (image_t**)malloc(sizeof(image_t)*9);
+  image_t** avgImgs = (image_t**)malloc(sizeof(image_t)*10);
 
   int o;
+  image_t* outputImg;
   if(strcmp(argv[1], "average") == 0){
       int i;
       openInputFiles(namePtr, avgFiles);
-      for(i = 0, i < 10; i++){
+      for(i = 0; i < 10; i++){
         avgImgs[i] = read_ppm(avgFiles[i]);
 
       };
-      image_t* outputImg = removeNoiseAverage(avgImgs);
+      outputImg = removeNoiseAverage(avgImgs);
       write_p6(optr, outputImg);
 
-      for(o = 0; o < 10; 0++){
+      for(o = 0; o < 10; o++){
         fclose(avgFiles[o]);
       };
   };
@@ -51,14 +52,14 @@ int main(int argc, char * argv[]){
   if(strcmp(argv[1], "median") == 0){
       int i;
       openInputFiles(namePtr, medFiles);
-      for(i = 0, i < 9; i++){
+      for(i = 0; i < 9; i++){
         medImgs[i] = read_ppm(medFiles[i]);
 
       };
-      image_t* outputImg = removeNoiseMedian(medImgs);
+      outputImg = removeNoiseMedian(medImgs);
       write_p3(optr, outputImg);
 
-      for(o = 0; o < 9; 0++){
+      for(o = 0; o < 9; o++){
         fclose(medFiles[o]);
       };
   };

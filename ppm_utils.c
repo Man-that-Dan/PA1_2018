@@ -1,19 +1,20 @@
 #include "ppm_utils.h"
 #include <stdio.h>
+#include <stdlib.h>
 // delete this comment. note to self: may want to change any header ->'s to .'s
 
 void ckws_comments(FILE *infileptr){
   int done = 0;
   while(done == 0){
     char currentChar = fgetc(infileptr);
-    if((isspace(currentChar)) == 0 && currentChar != "#"){
-      ungetc(infileptr);
+    if((isspace(currentChar)) == 0 && strcmp(currentChar, "#") != 0){
+      ungetc(currentChar, infileptr);
       done = 1;
     };
-    if(currentChar == "#"){
+    if(strcmp(currentChar, "#") == 0){
       char newLine = 0;
       while(newLine == 0){
-        if((fgetc(infileptr)) == "\n"){
+        if(strcmp(fgetc(infileptr), "\n") == 0){
           newLine = 1;
           done = 1;
         };
@@ -28,11 +29,11 @@ void openInputFiles(char* name, FILE* inPut[]){
     char fileName[20];
     for(i = 0; i < 10; i++){
       int ext = i+1;
-      sprintf(fileName, "average_%3d.ppm", &ext);
+      sprintf(fileName, "average_%3d.ppm", ext);
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
-        return 1;
+        exit;
       };
     }
   };
@@ -41,11 +42,11 @@ void openInputFiles(char* name, FILE* inPut[]){
     char fileName[20];
     for(i = 0; i < 9; i++){
       int ext = i+1;
-      sprintf(fileName, "median_%3d.ppm", &ext);
+      sprintf(fileName, "median_%3d.ppm", ext);
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
-        return 1;
+        exit;
       };
     }
   };
@@ -54,17 +55,17 @@ void openInputFiles(char* name, FILE* inPut[]){
 
 image_t* removeNoiseAverage(image_t* img[]){
   image_t* newImg = (image_t*) malloc(sizeof(image_t));
-  newImg->header = img[0].header;
+  newImg->header = img[0]->header;
   int sum = 0;
   int i;
   int r = 0;
-  int totalPixels = (img[0].header.HEIGHT)*(img[0].header.WIDTH);
+  int totalPixels = (img[0]->header.HEIGHT)*(img[0]->header.WIDTH);
   // delete this comment: remember to free this later
   newImg->pixels = (pixel_t*) malloc(sizeof(pixel_t) * totalPixels);
   while(r < totalPixels){
   // Average Red values
     for(i = 0; i < 10; i++){
-      int val = img[i].pixels[r].R;
+      int val = img[i]->pixels[r].R;
       sum += val;
     };
     int avg = sum/10;
@@ -72,18 +73,18 @@ image_t* removeNoiseAverage(image_t* img[]){
 
   // Average Green values
     for(i = 0; i < 10; i++){
-      int val = img[i].pixels[r].G;
+      int val = img[i]->pixels[r].G;
       sum += val;
     };
-    int avg = sum/10;
+    avg = sum/10;
     newImg->pixels[r].G = avg;
 
   // Average Blue values
     for(i = 0; i < 10; i++){
-      int val = img[i].pixels[r].B;
+      int val = img[i]->pixels[r].B;
       sum += val;
     };
-    int avg = sum/10;
+  ageavg = sum/10;
     newImg->pixels[r].B = avg;
 
     //move on to next pixel
@@ -97,17 +98,17 @@ image_t* removeNoiseAverage(image_t* img[]){
 //
 image_t* removeNoiseMedian(image_t* image[]){
   image_t* newImg = (image_t*) malloc(sizeof(image_t));
-  newImg->header = img[0].header;
-  int nums[9];
+  newImg->header = image[0]->header;
+  unsigned int nums[9];
   int i;
   int r = 0;
-  int totalPixels = (img[0].header.HEIGHT)*(img[0].header.WIDTH);
+  int totalPixels = (image[0]->header.HEIGHT)*(image[0]->header.WIDTH);
   newImg->pixels = (pixel_t*) malloc(sizeof(pixel_t) * totalPixels);
 //delete this comment. replace with a while loop increasing the pixel that is averaged
   while(r < totalPixels){
   // Average Red values
     for(i = 0; i < 9; i++){
-      int val = img[i].pixels[r].R;
+      int val = image[i]->pixels[r].R;
       nums[i] = val;
     };
     sort(nums, 9);
@@ -116,20 +117,20 @@ image_t* removeNoiseMedian(image_t* image[]){
 
   // Average Green values
     for(i = 0; i < 9; i++){
-      int val = img[i].pixels[r].G;
+      int val = image[i]->pixels[r].G;
       nums[i] = val;
     };
     sort(nums, 9);
-    int median = nums[4];
+    median = nums[4];
     newImg->pixels[r].G = median;
 
   // Average Blue values
     for(i = 0; i < 9; i++){
-      int val = img[i].pixels[r].B;
+      int val = image[i]->pixels[r].B;
       nums[i] = val;
     };
     sort(nums, 9);
-    int median = nums[4];
+    median = nums[4];
     newImg->pixels[r].B = median;
 
     //move on to next pixel
@@ -139,10 +140,10 @@ image_t* removeNoiseMedian(image_t* image[]){
   return newImg;
 };
 
-void swap(int* left, int* right){
-  int temp = *(left);
-  *(left) = *(right);
-  *(right) = temp;
+void swap(unsigned int* a, unsigned int* b){
+  int temp = *(a);
+  *(a) = *(b);
+  *(b) = temp;
 }
 
 // delete this comment. Note to self: check sort functionality.
@@ -169,7 +170,7 @@ void sort(unsigned int* arr, int n){
   };
   // delete this printf("Performed %d swaps", totalSwaps);
 };
-};
+
 
 header_t read_header(FILE* image_file) {
   header_t header;
