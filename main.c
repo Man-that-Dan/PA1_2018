@@ -63,8 +63,8 @@ int main(int argc, char * argv[]){
 
       for(o = 0; o < 10; o++){
         fclose(avgFiles[o]);
-        free(avgImgs[i]->pixels);
-        free(avgImgs[i]);
+        free(avgImgs[o]->pixels);
+        free(avgImgs[o]);
       };
   };
 
@@ -81,8 +81,8 @@ int main(int argc, char * argv[]){
 
       for(o = 0; o < 9; o++){
         fclose(medFiles[o]);
-        free(medImgs[i]->pixels);
-        free(medImgs[i]);
+        free(medImgs[o]->pixels);
+        free(medImgs[o]);
       };
   };
 
