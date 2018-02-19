@@ -1,20 +1,22 @@
 #include "ppm_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 // delete this comment. note to self: may want to change any header ->'s to .'s
 
 void ckws_comments(FILE *infileptr){
   int done = 0;
   while(done == 0){
     char currentChar = fgetc(infileptr);
-    if((isspace(currentChar)) == 0 && strcmp(currentChar, "#") != 0){
+    if((isspace(currentChar)) == 0 && strcmp(&currentChar, "#") != 0){
       ungetc(currentChar, infileptr);
       done = 1;
     };
-    if(strcmp(currentChar, "#") == 0){
+    if(strcmp(&currentChar, "#") == 0){
       char newLine = 0;
       while(newLine == 0){
-        if(strcmp(fgetc(infileptr), "\n") == 0){
+        currentChar = fgetc(infileptr);
+        if(strcmp(&currentChar, "\n") == 0){
           newLine = 1;
           done = 1;
         };
@@ -33,7 +35,7 @@ void openInputFiles(char* name, FILE* inPut[]){
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
-        exit;
+        exit();
       };
     }
   };
@@ -46,7 +48,7 @@ void openInputFiles(char* name, FILE* inPut[]){
       inPut[i] = fopen(fileName, "r");
       if(inPut[i] == NULL){
         printf("Error: Could not open %s", fileName);
-        exit;
+        exit();
       };
     }
   };
@@ -84,7 +86,7 @@ image_t* removeNoiseAverage(image_t* img[]){
       int val = img[i]->pixels[r].B;
       sum += val;
     };
-  ageavg = sum/10;
+    avg = sum/10;
     newImg->pixels[r].B = avg;
 
     //move on to next pixel
