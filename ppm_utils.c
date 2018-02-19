@@ -72,7 +72,7 @@ image_t* removeNoiseAverage(image_t* img[]){
     };
     int avg = sum/10;
     newImg->pixels[r].R = avg;
-
+    sum = 0;
   // Average Green values
     for(i = 0; i < 10; i++){
       int val = img[i]->pixels[r].G;
@@ -80,7 +80,7 @@ image_t* removeNoiseAverage(image_t* img[]){
     };
     avg = sum/10;
     newImg->pixels[r].G = avg;
-
+    sum = 0;
   // Average Blue values
     for(i = 0; i < 10; i++){
       int val = img[i]->pixels[r].B;
@@ -88,7 +88,7 @@ image_t* removeNoiseAverage(image_t* img[]){
     };
     avg = sum/10;
     newImg->pixels[r].B = avg;
-
+    sum = 0;
     //move on to next pixel
     r++;
   };
