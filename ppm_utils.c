@@ -1,6 +1,5 @@
 /*************************
 *Daniel Toro
-*CPSC 1020 002, Sp18
 *dtoro@g.clemson.edu
 *************************/
 
@@ -13,6 +12,7 @@
 #include <ctype.h>
 
 // function to skip white spaces and comments
+// pass input file pointer a argument. No return
 void ckws_comments(FILE *infileptr){
   int done = 0;
   while(done == 0){
@@ -34,7 +34,9 @@ void ckws_comments(FILE *infileptr){
   };
 }
 
-//opens input files and stores pointers in FILE pointer array given
+// opens input files and stores pointers in FILE pointer array given
+// first argument should be "average" or "median" based on noise reduction
+// method desired.
 void openInputFiles(char* name, FILE* inPut[]){
   // open files named average###.ppm
   if(strcmp(name, "average") == 0){
@@ -67,7 +69,8 @@ void openInputFiles(char* name, FILE* inPut[]){
 
 }
 
-//removes noise using average value of pixels
+// removes noise using average value of pixels
+// takes image pointer array as argument
 image_t* removeNoiseAverage(image_t* img[]){
   image_t* newImg = (image_t*) malloc(sizeof(image_t));
   newImg->header = img[0]->header;
@@ -217,6 +220,7 @@ image_t* read_ppm(FILE* image_file) {
   return image;
 }
 
+//Read a file in p6 format
 image_t* read_p6(FILE* image_file, header_t header) {
   int num_pixels = header.HEIGHT * header.WIDTH;
   image_t* image = (image_t*) malloc(sizeof(image_t));
@@ -232,6 +236,7 @@ image_t* read_p6(FILE* image_file, header_t header) {
   return image;
 }
 
+//read a file in p3 format
 image_t* read_p3(FILE* image_file, header_t header) {
   int num_pixels = header.HEIGHT * header.WIDTH;
   image_t* image = (image_t*) malloc(sizeof(image_t));
@@ -247,6 +252,7 @@ image_t* read_p3(FILE* image_file, header_t header) {
   return image;
 }
 
+//write a file in p6 format
 void write_p6(FILE* out_file, image_t* image) {
   header_t header = image->header;
   header.MAGIC_NUMBER[1] = '6';
@@ -261,6 +267,7 @@ void write_p6(FILE* out_file, image_t* image) {
   }
 }
 
+//write a file in p3 format
 void write_p3(FILE* out_file, image_t* image) {
   header_t header = image->header;
   header.MAGIC_NUMBER[1] = '3';
